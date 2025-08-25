@@ -2,13 +2,14 @@
 #include "projectile.h"
 #include <raylib.h>
 #include <raymath.h>
+#include <iostream>
 
 Projectile::Projectile(Vector2 startPosition, float angle, float force)
 {
     position = startPosition;
     speed = force;
     direction = angle; // default direction
-    rotation = direction;
+    rotationInDegrees = direction;
     mainSprite = LoadTexture("resources/sprites/projectiles/bullet_2.png");
     isActive = true;
 }
@@ -16,10 +17,17 @@ Projectile::Projectile(Vector2 startPosition, float angle, float force)
 void Projectile::Update()
 {
     if (isActive) {
-        //movement
-        if (speed > 0.0f) {
-            position.y -= speed;
-        }
+        //angle
+
+        float deltaTime = GetFrameTime();
+
+        Vector2 movement = {
+            cosf(DEG2RAD * rotationInDegrees) * speed * deltaTime,
+            sinf(DEG2RAD * rotationInDegrees) * speed * deltaTime * -1.0f
+        };
+        
+        position.x += movement.x;
+        position.y += movement.y;
 
         //delete if off screen
         //TODO : create a game manager since we need to delete this projectile from the player buffer

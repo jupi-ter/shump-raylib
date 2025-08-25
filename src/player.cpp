@@ -10,7 +10,7 @@ Player::Player()
 {
     position = { 64.0f, 64.0f };
     speed = 4;
-    rotation = 0.0f;
+    rotationInDegrees = 0.0f;
     mainSprite = LoadTexture("resources/sprites/ship/ship.png");
 }
 
@@ -48,10 +48,13 @@ void Player::HandleShooting()
     if (canShoot && IsKeyPressed(KEY_SPACE)) {
         //std::cout<<"shoot!";
         canShoot = false;
-        shootTimerInSeconds = 0.5f;
+        shootTimerInSeconds = 0.25f;
 
+        // todo: change this later.
+        int magicNumber = 8 * SPRITE_SCALE; 
+        Projectile projectile(Vector2{position.x + magicNumber, position.y - magicNumber}, 90.0f, 500.0f);
         //we need to add them to a buffer so they keep existing after this function ends
-        projectiles.emplace_back(position, 0.0f, 10.0f);
+        projectiles.push_back(projectile);
     }
 }
 
