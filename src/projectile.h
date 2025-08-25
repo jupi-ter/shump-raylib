@@ -4,8 +4,7 @@
 class Projectile : public GameObject
 {
 public:
-    Projectile();   // sets up defaults inside itself
-    void Launch(Vector2 startPosition, float angle, float force);
+    Projectile(Vector2 startPosition, float angle, float force);   // sets up defaults inside itself
     void Update() override;
 
 protected:

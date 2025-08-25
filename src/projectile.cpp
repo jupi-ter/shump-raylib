@@ -3,40 +3,31 @@
 #include <raylib.h>
 #include <raymath.h>
 
-Projectile::Projectile()
-{
-    position = { 0.0f, 0.0f };
-    speed = 0.0f;
-    direction = 0.0f; // default direction
-    rotation = 0.0f;
-    mainSprite = LoadTexture("resources/sprites/projectiles/bullet_2.png");
-}
-
-void Projectile::Launch(Vector2 startPosition, float angle, float force)
+Projectile::Projectile(Vector2 startPosition, float angle, float force)
 {
     position = startPosition;
     speed = force;
-    direction = angle;
+    direction = angle; // default direction
     rotation = direction;
+    mainSprite = LoadTexture("resources/sprites/projectiles/bullet_2.png");
     isActive = true;
 }
 
 void Projectile::Update()
 {
-    if (isActive)
-    {
-        // Convert angle to radians for calculation
-        float rad = DEG2RAD * direction;
-        // Update position based on speed and direction
-        position.x += cosf(rad) * speed;
-        position.y += sinf(rad) * speed;
+    if (isActive) {
+        //movement
+        if (speed > 0.0f) {
+            position.y -= speed;
+        }
 
-        /*/ deactivate if outside screen bounds
-        if (position.x < 0 || position.x > GetScreenWidth() ||
-            position.y < 0 || position.y > GetScreenHeight())
-        {
+        //delete if off screen
+        //TODO : create a game manager since we need to delete this projectile from the player buffer
+        // but we cant do it from here, also thats bad practice and stupid
+        if (position.y < -mainSprite.height * SPRITE_SCALE) {
             isActive = false;
-            delete this;
-        }*/
+        }
+        
+        Draw();
     }
 }

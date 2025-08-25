@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <iostream>
+using namespace std;
 
 Player::Player()
 {
@@ -17,6 +18,11 @@ void Player::Update()
 {
     HandleInput();
     HandleShooting();
+    CheckShootCooldown();
+
+    for (auto& projectile : projectiles) {
+        projectile.Update();
+    }
 }
 
 void Player::HandleInput()
@@ -29,8 +35,8 @@ void Player::HandleInput()
 
 void Player::CheckShootCooldown()
 {
-    shootTimer -= GetFrameTime();
-    if (shootTimer <= 0.0f)
+    shootTimerInSeconds -= GetFrameTime();
+    if (shootTimerInSeconds <= 0.0f)
     {
         canShoot = true;
     }
@@ -40,11 +46,22 @@ void Player::CheckShootCooldown()
 void Player::HandleShooting()
 {
     if (canShoot && IsKeyPressed(KEY_SPACE)) {
+        //std::cout<<"shoot!";
         canShoot = false;
-        shootTimer = 0.5f; // half a second cooldown
+        shootTimerInSeconds = 0.5f;
 
-        Projectile* b = new Projectile();
-        std::cout<<"shooting";
-        b->Launch(position, 90, 10.0f);
+        //we need to add them to a buffer so they keep existing after this function ends
+        projectiles.emplace_back(position, 0.0f, 10.0f);
     }
 }
+
+
+void Player::Draw() const
+{
+    GameObject::Draw();
+
+    // Draw all active projectiles
+    for (const auto& projectile : projectiles) {
+        projectile.Draw();
+    }
+}   
